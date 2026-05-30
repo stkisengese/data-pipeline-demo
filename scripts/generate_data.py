@@ -78,3 +78,35 @@ def generate_activities(beneficiary_ids, num_rows=300):
         })
     
     return pd.DataFrame(data)
+
+def generate_disbursements(beneficiary_ids, num_rows=400):
+    """
+    Generates synthetic disbursement data.
+    Includes outliers and unverified records.
+    """
+    payment_methods = ['Mobile Money', 'Cash in Hand', 'Bank Transfer', 'Voucher']
+    data = []
+    
+    for _ in range(num_rows):
+        # 98% of the time, use a valid beneficiary_id
+        if random.random() > 0.02:
+            b_id = random.choice(beneficiary_ids)
+        else:
+            b_id = f"BEN-{fake.random_number(digits=6, fix_len=True)}"
+            
+        amount = round(random.uniform(20.0, 150.0), 2)
+        
+        # Inject outliers (> 3 std dev roughly)
+        if random.random() < 0.02:
+            amount = round(random.uniform(1000.0, 2000.0), 2)
+            
+        data.append({
+            'disbursement_id': f"DISB-{fake.unique.random_number(digits=6, fix_len=True)}",
+            'beneficiary_id': b_id,
+            'amount_usd': amount,
+            'disbursement_date': fake.date_between(start_date='-1y', end_date='today').isoformat(),
+            'payment_method': random.choice(payment_methods),
+            'verified': random.random() > 0.1 # 10% unverified
+        })
+        
+    return pd.DataFrame(data)
