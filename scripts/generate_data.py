@@ -51,3 +51,30 @@ def generate_beneficiaries(num_rows=500):
     df = pd.concat([df, duplicates], ignore_index=True)
     
     return df
+
+def generate_activities(beneficiary_ids, num_rows=300):
+    """
+    Generates synthetic activity data.
+    Includes intentional orphans (beneficiary_id not in beneficiaries).
+    """
+    activity_types = ['cash transfer', 'food assistance', 'health screening', 'education support']
+    statuses = ['completed', 'pending', 'cancelled']
+    data = []
+    
+    for _ in range(num_rows):
+        # 95% of the time, use a valid beneficiary_id
+        if random.random() > 0.05:
+            b_id = random.choice(beneficiary_ids)
+        else:
+            b_id = f"BEN-{fake.random_number(digits=6, fix_len=True)}" # Potential orphan
+            
+        data.append({
+            'activity_id': f"ACT-{fake.unique.random_number(digits=6, fix_len=True)}",
+            'beneficiary_id': b_id,
+            'activity_type': random.choice(activity_types),
+            'activity_date': fake.date_between(start_date='-1y', end_date='today').isoformat(),
+            'staff_id': f"STAFF-{random.randint(1, 20)}",
+            'status': random.choice(statuses)
+        })
+    
+    return pd.DataFrame(data)
