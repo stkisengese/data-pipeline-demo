@@ -54,6 +54,53 @@ def transform_to_silver(db_path='data/humanitarian.db'):
     
     conn.close()
 
+def transform_to_gold(db_path='data/humanitarian.db'):
+    """
+    Aggregates Silver data into Gold analytical marts.
+    """
+    print("Transforming Silver to Gold...")
+    conn = sqlite3.connect(db_path)
+    
+    # Load Silver tables
+    df_b = pd.read_sql("SELECT * FROM silver_beneficiaries", conn)
+    df_a = pd.read_sql("SELECT * FROM silver_activities", conn)
+    df_d = pd.read_sql("SELECT * FROM silver_disbursements", conn)
+    
+    # 1. beneficiary_summary: per program, per country
+    beneficiary_summary = df_b.groupby(['program_id', 'country']).agg(
+        total_beneficiaries=('beneficiary_id', 'count'),
+        avg_age=('age', 'mean'),
+        avg_vulnerability=('vulnerability_score', 'mean')
+    ).reset_index()
+    
+    # Gender breakdown (pivoted)
+    gender_counts = df_b.groupby(['program_id', 'country', 'gender']).size().unstack(fill_value=0).reset_index()
+    beneficiary_summary = beneficiary_summary.merge(gender_counts, on=['program_id', 'country'], how='left')
+    
+    beneficiary_summary.to_sql('gold_beneficiary_summary', conn, if_exists='replace', index=False)
+    
+    # 2. program_activity_report: activity counts by type and status, per program
+    activity_report = df_a.groupby(['activity_type', 'status']).size().reset_index(name='count')
+    # Actually, the prompt says "per program"
+    activity_report_prog = df_a.merge(df_b[['beneficiary_id', 'program_id']], on='beneficiary_id', how='left')
+    activity_report_prog = activity_report_prog.groupby(['program_id', 'activity_type', 'status']).size().reset_index(name='activity_count')
+    
+    activity_report_prog.to_sql('gold_program_activity_report', conn, if_exists='replace', index=False)
+    
+    # 3. disbursement_report: total disbursed per program
+    # Need to link disbursements to programs via beneficiaries
+    df_d_prog = df_d.merge(df_b[['beneficiary_id', 'program_id']], on='beneficiary_id', how='left')
+    disbursement_report = df_d_prog.groupby('program_id').agg(
+        total_amount_usd=('amount_usd', 'sum'),
+        avg_disbursement=('amount_usd', 'mean'),
+        disbursement_count=('disbursement_id', 'count')
+    ).reset_index()
+    
+    disbursement_report.to_sql('gold_disbursement_report', conn, if_exists='replace', index=False)
+    
+    print("Gold marts created successfully.")
+    conn.close()
 
 if __name__ == "__main__":
     transform_to_silver()
+    transform_to_gold()
