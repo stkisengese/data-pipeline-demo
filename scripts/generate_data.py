@@ -110,3 +110,26 @@ def generate_disbursements(beneficiary_ids, num_rows=400):
         })
         
     return pd.DataFrame(data)
+
+def main():
+    print("Generating synthetic humanitarian data...")
+    
+    os.makedirs('data/raw', exist_ok=True)
+    
+    df_beneficiaries = generate_beneficiaries(500)
+    beneficiary_ids = df_beneficiaries['beneficiary_id'].unique().tolist()
+    
+    df_activities = generate_activities(beneficiary_ids, 300)
+    df_disbursements = generate_disbursements(beneficiary_ids, 400)
+    
+    df_beneficiaries.to_csv('data/raw/beneficiaries.csv', index=False)
+    df_activities.to_csv('data/raw/activities.csv', index=False)
+    df_disbursements.to_csv('data/raw/disbursements.csv', index=False)
+    
+    print(f"Generated {len(df_beneficiaries)} beneficiaries.")
+    print(f"Generated {len(df_activities)} activities.")
+    print(f"Generated {len(df_disbursements)} disbursements.")
+    print("Files saved to data/raw/")
+
+if __name__ == "__main__":
+    main()
