@@ -71,7 +71,14 @@ Execute the full ELT process:
 python pipeline/run_pipeline.py
 ```
 
-## Data Quality & Validation
+### 5. Run Tests
+To verify the data quality logic, run the automated tests:
+```bash
+pytest tests/test_validate.py
+```
+
+## 📊 Data Quality & Validation
+
 
 A core component of this pipeline is the `validate.py` module, which produces a `quality_report.txt` after each run. Key checks include:
 
