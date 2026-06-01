@@ -120,5 +120,5 @@ With more time, I would:
 
 ---
 **License** [MIT License](/LICENSE) 
-**Contact:** [Stephen Kisengese](github.com/stkisengese)
+**Contact:** [Stephen Kisengese](https://github.com/stkisengese)
 ---
