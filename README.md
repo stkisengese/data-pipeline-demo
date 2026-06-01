@@ -117,6 +117,7 @@ With more time, I would:
 - **Great Expectations:** Replace the custom validation framework with Great Expectations for more robust, scalable data profiling.
 - **Airflow/Prefect:** Add an orchestration layer to handle retries and complex dependencies.
 - **Cloud Integration:** Move source data to S3 and the data warehouse to Snowflake or BigQuery.
+- **Scalability with PySpark:** For large-scale datasets (e.g., millions of global records), I would migrate the Pandas transformation logic to **PySpark** on a distributed cluster (like Databricks or AWS EMR) to ensure high-performance processing and memory management.
 
 ---
 **License** [MIT License](/LICENSE) 
