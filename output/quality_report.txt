@@ -1,0 +1,47 @@
+--- HUMANITARIAN DATA QUALITY REPORT ---
+Generated at: 2026-05-30 15:53:44.832468
+
+1. NULL VALUE ANALYSIS
+ Table: Beneficiaries
+  - beneficiary_id: 0 nulls (0.00%) [PASS]
+  - program_id: 0 nulls (0.00%) [PASS]
+  - registration_date: 0 nulls (0.00%) [PASS]
+  - country: 0 nulls (0.00%) [PASS]
+  - age: 0 nulls (0.00%) [PASS]
+  - gender: 86 nulls (16.70%) [FAIL (ALARM)]
+  - household_size: 0 nulls (0.00%) [PASS]
+  - vulnerability_score: 35 nulls (6.80%) [FAIL (ALARM)]
+  - ingestion_timestamp: 0 nulls (0.00%) [PASS]
+ Table: Activities
+  - activity_id: 0 nulls (0.00%) [PASS]
+  - beneficiary_id: 0 nulls (0.00%) [PASS]
+  - activity_type: 0 nulls (0.00%) [PASS]
+  - activity_date: 0 nulls (0.00%) [PASS]
+  - staff_id: 0 nulls (0.00%) [PASS]
+  - status: 0 nulls (0.00%) [PASS]
+  - ingestion_timestamp: 0 nulls (0.00%) [PASS]
+ Table: Disbursements
+  - disbursement_id: 0 nulls (0.00%) [PASS]
+  - beneficiary_id: 0 nulls (0.00%) [PASS]
+  - amount_usd: 0 nulls (0.00%) [PASS]
+  - disbursement_date: 0 nulls (0.00%) [PASS]
+  - payment_method: 0 nulls (0.00%) [PASS]
+  - verified: 0 nulls (0.00%) [PASS]
+  - ingestion_timestamp: 0 nulls (0.00%) [PASS]
+
+2. DUPLICATE RECORD ANALYSIS
+ Table: Beneficiaries - Duplicates found: 15
+ Table: Activities - Duplicates found: 0
+ Table: Disbursements - Duplicates found: 0
+
+3. REFERENTIAL INTEGRITY
+ Orphan Activities (no beneficiary match): 12
+ Orphan Disbursements (no beneficiary match): 12
+
+4. OUTLIER DETECTION
+ Disbursement Amount Outliers (>3 std dev): 8
+  Top outlier value: $1,857.09
+
+5. DATE RANGE VALIDATION
+ Future registration dates found: 0
+ Pre-program registration dates (<2010): 0
